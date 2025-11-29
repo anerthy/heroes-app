@@ -2,4 +2,11 @@
 
 This app is a search of heroes
 
+Dependencies
 [shadcn](https://ui.shadcn.com/docs/installation/vite)
+[React router](https://reactrouter.com/start/data/installation)
+
+AI's
+[v0](https://v0.app/)
+[Lovable](https://lovable.dev/)
+[Bold](https://bolt.new/)
