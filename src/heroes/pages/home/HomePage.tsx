@@ -8,11 +8,19 @@ import { HeroGrid } from '@/heroes/components/HeroGrid';
 import { useState } from 'react';
 import { CustomPagination } from '@/components/custom/CustomPagination';
 import { CustomBreadcrumb } from '@/components/custom/CustomBreadcrumb';
+import { getHeroesByPageAction } from '@/heroes/actions/get-heroes-by-page.action';
+import { useQuery } from '@tanstack/react-query';
 
 type tabs = 'all' | 'favorites' | 'heroes' | 'villains';
 
 export const HomePage = () => {
   const [activeTab, setActiveTab] = useState<tabs>('all');
+
+  const { data: heroesResponse } = useQuery({
+    queryKey: ['heroes-by-page'],
+    queryFn: () => getHeroesByPageAction(),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
   return (
     <>
@@ -51,7 +59,7 @@ export const HomePage = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="all">
-            <HeroGrid />
+            <HeroGrid heroes={heroesResponse?.heroes || []} />
           </TabsContent>
           <TabsContent value="favorites">Favorites (3)</TabsContent>
           <TabsContent value="heroes">Heroes (12)</TabsContent>
