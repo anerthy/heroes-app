@@ -4,6 +4,8 @@ This app is a search of heroes
 
 Dependencies
 [shadcn](https://ui.shadcn.com/docs/installation/vite)
+npx shadcn@latest add
+
 [React router](https://reactrouter.com/start/data/installation)
 
 AI's
