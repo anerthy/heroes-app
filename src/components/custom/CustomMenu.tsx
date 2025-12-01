@@ -22,7 +22,7 @@ export const CustomMenu = () => {
     <NavigationMenu>
       <NavigationMenuList>
         {pages.map((page) => (
-          <NavigationMenuItem>
+          <NavigationMenuItem key={page.name}>
             <NavigationMenuLink
               asChild
               className={cn(
@@ -30,7 +30,9 @@ export const CustomMenu = () => {
                 'rounded-md p-2'
               )}
             >
-              <Link to={page.href}>{page.name}</Link>
+              <Link to={page.href} key={page.name}>
+                {page.name}
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         ))}
