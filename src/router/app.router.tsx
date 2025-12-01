@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, Navigate } from 'react-router';
 import { HomePage } from '@/heroes/pages/home/HomePage';
 import { HeroPage } from '@/heroes/pages/hero/HeroPage';
 // import { SearchPage } from '@/heroes/pages/search/SearchPage';
@@ -20,7 +20,7 @@ export const appRouter = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: 'heroes/1',
+        path: 'heroes/:slug',
         element: <HeroPage />,
       },
       {
@@ -41,6 +41,7 @@ export const appRouter = createBrowserRouter([
   },
   {
     path: '*',
-    element: <div>404 - Not Found</div>,
+    // element: <div>404 - Not Found</div>,
+    element: <Navigate to="/" replace />,
   },
 ]);
