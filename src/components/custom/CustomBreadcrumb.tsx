@@ -1,4 +1,3 @@
-import { Link } from 'react-router';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,9 +22,7 @@ export const CustomBreadcrumb = ({ breadcrumbs, currentPage }: Props) => {
     <Breadcrumb className="my-5">
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink>
-            <Link to="/">Home</Link>
-          </BreadcrumbLink>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
         </BreadcrumbItem>
         {breadcrumbs &&
           breadcrumbs.map(({ label, to }) => (
