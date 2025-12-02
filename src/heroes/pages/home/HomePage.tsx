@@ -1,5 +1,4 @@
-import { Filter, Heart } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Heart } from 'lucide-react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CustomJumbotron } from '@/components/custom/CustomJumbotron';
@@ -10,21 +9,24 @@ import { CustomBreadcrumb } from '@/components/custom/CustomBreadcrumb';
 import { useHeroSummary } from '@/heroes/hooks/useHeroSummary';
 import { usePaginatedHeroes } from '@/heroes/hooks/usePaginatedHeroes';
 import { useHomePageParams } from '@/heroes/hooks/useHomePageParams';
+import { FavoriteHeroContext } from '@/heroes/context/FavoriteHeroContext';
+import { use, useMemo } from 'react';
+import { useSearchParams } from 'react-router';
 
 export const HomePage = () => {
-  const {
-    category,
-    page,
-    limit,
-    tab,
-    handleTabChange,
-    handleCategoryChange,
-    setSearchParams,
-  } = useHomePageParams();
+  const { category, page, limit } = useHomePageParams();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') ?? 'all';
+
+  const selectedTab = useMemo(() => {
+    const validTabs = ['all', 'favorites', 'heroes', 'villains'];
+    return validTabs.includes(activeTab) ? activeTab : 'all';
+  }, [activeTab]);
 
   const { data: heroesResponse } = usePaginatedHeroes(+page, +limit, category);
   const { data: summary } = useHeroSummary();
-
+  const { favoriteCount, favorites } = use(FavoriteHeroContext);
   return (
     <>
       <CustomJumbotron
@@ -37,14 +39,14 @@ export const HomePage = () => {
       <HeroStats />
 
       {/* Tabs */}
-      <Tabs value={tab} className="mb-8">
+      <Tabs value={selectedTab} className="mb-8">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger
             value="all"
             onClick={() => {
-              handleTabChange('all');
-              handleCategoryChange('all');
               setSearchParams((prev) => {
+                prev.set('tab', 'all');
+                prev.set('category', 'all');
                 prev.set('page', '1');
                 return prev;
               });
@@ -56,18 +58,26 @@ export const HomePage = () => {
             value="favorites"
             className="flex items-center gap-2"
             onClick={() => {
-              handleTabChange('favorites');
-              handleCategoryChange('all');
+              setSearchParams((prev) => {
+                prev.set('tab', 'favorites');
+                prev.set('category', 'all');
+                prev.set('page', '1');
+                return prev;
+              });
             }}
           >
             <Heart className="h-4 w-4" />
-            Favorites (3)
+            Favorites ({favoriteCount})
           </TabsTrigger>
           <TabsTrigger
             value="heroes"
             onClick={() => {
-              handleTabChange('heroes');
-              handleCategoryChange('hero');
+              setSearchParams((prev) => {
+                prev.set('tab', 'heroes');
+                prev.set('category', 'hero');
+                prev.set('page', '1');
+                return prev;
+              });
             }}
           >
             Heroes (12)
@@ -75,8 +85,12 @@ export const HomePage = () => {
           <TabsTrigger
             value="villains"
             onClick={() => {
-              handleTabChange('villains');
-              handleCategoryChange('villain');
+              setSearchParams((prev) => {
+                prev.set('tab', 'villains');
+                prev.set('category', 'villain');
+                prev.set('page', '1');
+                return prev;
+              });
             }}
           >
             Villains ({summary?.villainCount})
@@ -85,7 +99,9 @@ export const HomePage = () => {
         <TabsContent value="all">
           <HeroGrid heroes={heroesResponse?.heroes ?? []} />
         </TabsContent>
-        <TabsContent value="favorites">Favorites (3)</TabsContent>
+        <TabsContent value="favorites">
+          <HeroGrid heroes={favorites} />
+        </TabsContent>
         <TabsContent value="heroes">
           <HeroGrid heroes={heroesResponse?.heroes ?? []} />
         </TabsContent>
@@ -95,7 +111,7 @@ export const HomePage = () => {
       </Tabs>
 
       {/* Results info */}
-      <div className="flex justify-between items-center mb-6">
+      {/* <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <p className="text-gray-600">Showing 6 of 16 characters</p>
           <Badge variant="secondary" className="flex items-center gap-1">
@@ -103,9 +119,11 @@ export const HomePage = () => {
             Filtered
           </Badge>
         </div>
-      </div>
+      </div> */}
 
-      <CustomPagination totalPages={heroesResponse?.pages ?? 1} />
+      {selectedTab !== 'favorites' && (
+        <CustomPagination totalPages={heroesResponse?.pages ?? 1} />
+      )}
     </>
   );
 };
